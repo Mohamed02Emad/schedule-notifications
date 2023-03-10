@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
             val timePickerDialog = TimePickerDialog(
                 this, { _: TimePicker, myHour: Int, myMinute: Int ->
                     timeText = "$myHour:$myMinute"
-                }, hour, minute, false
+                }, hour, minute, true
             )
 
             Box(

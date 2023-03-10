@@ -6,8 +6,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.icu.util.Calendar
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.compose_app.MainActivity
 import com.example.compose_app.R
@@ -15,6 +17,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
+import kotlin.math.min
 
 class NotificationReceiver : BroadcastReceiver() {
 
@@ -36,21 +39,19 @@ class NotificationReceiver : BroadcastReceiver() {
 
             val pendingIntent = getIntent(context, REQUEST_TIMER1)
             val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            var now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
 
-            now = now.withHour(hour)
-                .withMinute(minute)
-                .withDayOfMonth(day)
-                .withMonth(month)
-                .withYear(year)
-
-            val utc = now.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC)
-                .toLocalDateTime()
-            val triggerAtMillis = utc.atZone(ZoneOffset.UTC)!!.toInstant()!!.toEpochMilli()
+            val calendar: Calendar = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, day)
+            }
 
             alarm.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
+                calendar.timeInMillis,
                 pendingIntent
             )
         }
@@ -62,7 +63,7 @@ class NotificationReceiver : BroadcastReceiver() {
             context = context,
             "your notification is here",
             "hope you are happy",
-            123
+            1234
         )
     }
 

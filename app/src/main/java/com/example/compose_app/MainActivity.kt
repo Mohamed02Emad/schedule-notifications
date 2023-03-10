@@ -42,11 +42,27 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val calendar = Calendar.getInstance()
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            val month = calendar.get(Calendar.MONTH)
-            val year = calendar.get(Calendar.YEAR)
-            val hour = calendar.get(Calendar.HOUR)
-            val minute = calendar.get(Calendar.MINUTE)
+            var day by remember {
+                mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH))
+            }
+            var month by remember {
+                mutableStateOf(calendar.get(Calendar.MONTH))
+            }
+            var year by remember {
+                mutableStateOf(
+                    calendar.get(Calendar.YEAR)
+                )
+            }
+            var hour by remember {
+                mutableStateOf(
+                    calendar.get(Calendar.HOUR)
+                )
+            }
+            var minute by remember {
+                mutableStateOf(
+                    calendar.get(Calendar.MINUTE)
+                )
+            }
 
             var dateText by remember {
                 mutableStateOf("$day / $month / $year")
@@ -58,12 +74,17 @@ class MainActivity : ComponentActivity() {
             val datePickerDialog = DatePickerDialog(
                 this, { _: DatePicker, myYear: Int, myMonth: Int, myDay: Int ->
                     dateText = "$myDay/ $myMonth / $myYear"
+                    day = myDay
+                    month = myMonth
+                    year = myYear
                 }, year, month, day
             )
 
             val timePickerDialog = TimePickerDialog(
                 this, { _: TimePicker, myHour: Int, myMinute: Int ->
                     timeText = "$myHour:$myMinute"
+                    hour = myHour
+                    minute = myMinute
                 }, hour, minute, true
             )
 
@@ -100,7 +121,15 @@ class MainActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         val message = "Notification set at $day/$month/$year , $hour:$minute"
-                        createNotification(this@MainActivity, message,day,month,year,hour,minute)
+                        createNotification(
+                            this@MainActivity,
+                            message,
+                            day,
+                            month,
+                            year,
+                            hour,
+                            minute
+                        )
                     }, modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 250.dp)
@@ -115,7 +144,6 @@ class MainActivity : ComponentActivity() {
 
             }
         }
-
         requestForPermission()
 
     }
@@ -124,7 +152,7 @@ class MainActivity : ComponentActivity() {
         context: Context, message: String,
         day: Int, month: Int, year: Int, hour: Int, minute: Int
     ) {
-        NotificationReceiver.startAlarm(context,day,month,year,hour,minute)
+        NotificationReceiver.startAlarm(context, day, month, year, hour, minute)
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -135,3 +163,5 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+
+

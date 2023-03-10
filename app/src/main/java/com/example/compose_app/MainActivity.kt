@@ -1,9 +1,11 @@
 package com.example.compose_app
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.widget.DatePicker
+import android.widget.TimePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -33,9 +35,8 @@ class MainActivity : ComponentActivity() {
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             val month = calendar.get(Calendar.MONTH)
             val year = calendar.get(Calendar.YEAR)
-
-            val hour = "14"
-            val minute = "00"
+            val hour = calendar.get(Calendar.HOUR)
+            val minute = calendar.get(Calendar.MINUTE)
 
             var dateText by remember {
                 mutableStateOf("$day / $month / $year")
@@ -46,8 +47,14 @@ class MainActivity : ComponentActivity() {
 
             val datePickerDialog = DatePickerDialog(
                 this, { _: DatePicker, year: Int, month: Int, day: Int ->
-                    dateText ="$day / $month / $year"
+                    dateText = "$day / $month / $year"
                 }, year, month, day
+            )
+
+            val timePickerDialog = TimePickerDialog(
+                this, { _: TimePicker, hour: Int, minute: Int ->
+                    timeText = "$hour:$minute"
+                }, hour, minute , false
             )
 
             Box(
@@ -57,7 +64,7 @@ class MainActivity : ComponentActivity() {
 
                 ) {
                 Text(
-                    text = dateText, style = TextStyle(
+                    text = dateText + "  ,  " + timeText, style = TextStyle(
                         fontSize = 18.sp,
                         color = Color.Black
                     ), modifier = Modifier
@@ -66,6 +73,7 @@ class MainActivity : ComponentActivity() {
                 )
                 Button(
                     onClick = {
+                        timePickerDialog.show()
                         datePickerDialog.show()
                     }, modifier = Modifier
                         .align(Alignment.Center)
